@@ -1,0 +1,9 @@
+version: '3'
+services:
+  slb:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: slb
+    ports:
+      - "8080:8080"
