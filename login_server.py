@@ -1,4 +1,5 @@
-# Credit to https://gist.github.com/qwexvf/26215f8d5ead61ba65af013dd00c75a5 for parts of the login_server.py code
+# Credit to https://gist.github.com/qwexvf/26215f8d5ead61ba65af013dd00c75a5
+# for parts of the login_server.py code
 import logging
 from flask import Flask, Response, redirect, request
 from urllib import parse
