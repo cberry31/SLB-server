@@ -6,11 +6,15 @@ from flask_cors import CORS
 from urllib import parse
 import requests
 from steam_api import SteamAPI
+from dotenv import load_dotenv
+import os
 
 
+load_dotenv()
+LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'WARNING')
 app = Flask(__name__)
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.LOGGING_LEVEL)
 app.logger.addHandler(stream_handler)
 CORS(app)
 RETURN_URL = "http://localhost:8080"
