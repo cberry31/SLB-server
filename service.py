@@ -1,18 +1,25 @@
 # Credit to https://gist.github.com/qwexvf/26215f8d5ead61ba65af013dd00c75a5
 # for parts of the login code
 import logging
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, Response
 from flask_cors import CORS
 from urllib import parse
 import requests
+from steam_api import SteamAPI
+from dotenv import load_dotenv
+import os
 
 
+load_dotenv()
+LOGGING_LEVEL = os.getenv('LOGGING_LEVEL', 'WARNING')
 app = Flask(__name__)
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.WARNING)
+logging.basicConfig(level=LOGGING_LEVEL)
+stream_handler.setLevel(LOGGING_LEVEL)
 app.logger.addHandler(stream_handler)
 CORS(app)
 RETURN_URL = "http://localhost:8080"
+steam_api = SteamAPI()
 
 
 @app.route('/login')
@@ -38,6 +45,17 @@ def setup():
     openid = params['openid.identity'].replace(prefix_url, '')
     valid = validate(params)
     return {'openid': openid, 'valid': valid}
+
+@app.route('/get_games', methods=['GET'])
+def get_games():
+    # TODO: Retrieve steam_id from database/or other source
+    steam_id = request.args.get('steam_id')
+    if steam_id is None:
+        return Response(400,{'error': 'No steam_id provided'})
+    all_games = steam_api.get_all_user_games(steam_id)
+    if all_games is None:
+        return Response(400,{'error': 'Could not retrieve games'})
+    return {'games': all_games['response']['games']}
 
 
 def validate(signed_params):
