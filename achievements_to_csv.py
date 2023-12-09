@@ -33,6 +33,7 @@ def format_achievements(achievements, user_achievements):
         all_achievements = achievements['game']['availableGameStats']['achievements']
         a = list(filter(lambda achievement_name_dict: achievement_name_dict['name'] == achievement['apiname'], all_achievements))[0]
         achievement_dict['name'] = a['displayName']
+        achievement_dict['description'] = a['description'] if 'description' in a else "Hidden"
         user_achievements_array.append(achievement_dict)
     formatted_achievements['achievements'] = user_achievements_array    
     return formatted_achievements
@@ -40,9 +41,12 @@ def format_achievements(achievements, user_achievements):
 def print_to_csv(achievements):
     all_achievements = achievements['achievements']
     with open(f'achievements_{format_filename(achievements["name"])}.csv', 'w') as f:
-        f.write('name,achieved\n')
+        f.write('Name,Discription,Achieved\n')
         for achievement in all_achievements:
-            f.write(f"{achievement['name']},{achievement['achieved']}\n")
+            f.write(f"{format_for_csv(achievement['name'])},{format_for_csv(achievement['description'])},{achievement['achieved']}\n")
+
+def format_for_csv(s):
+    return s.replace(',', ' ')
 
 def format_filename(s):
     """Take a string and return a valid filename constructed from the string.
@@ -63,7 +67,6 @@ def main():
     game_id = input('Enter game id: ')
     achievements = get_all_achievemnts_for_game(game_id)
     user_achievements = get_users_achievements(game_id)
-
     if achievements is None:
         print('Could not retrieve achievements')
         return
