@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
@@ -10,5 +10,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 EXPOSE 8080
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["gunicorn --workers 2 --bind 0.0.0.0:8080 --access-logfile - service:app"]
+CMD ["gunicorn", "--workers", "2", "--bind", "0.0.0.0:8080", "--access-logfile", "-", "--graceful-timeout", "30", "--timeout", "30", "service:app"]
